@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Randhir Foundation</title>
+    <!--favicon-->
+    <link rel="icon" type="image/png" href="logo.png">
+<!--favicon end-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        :root {
+            --yellow: #FFD700;
+            --dark-green: #006400;
+            --black: #121212;
+            --glass-bg: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--dark-green) 0%, var(--black) 50%, var(--yellow) 100%);
+            background-size: 400% 400%;
+            color: white;
+            overflow-x: hidden;
+            line-height: 1.6;
+            animation: gradientShift 15s ease infinite;
+        }
+        
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        /* Preloader */
+        #preloader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--black);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+        
+        .logo {
+            width: 120px;
+            height: 120px;
+            background: var(--yellow);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            font-size: 18px;
+            color: var(--dark-green);
+            transform-origin: center;
+        }
+        
+        /* Liquid Glass Effect */
+        .glass-effect {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px) saturate(180%);
+            -webkit-backdrop-filter: blur(12px) saturate(180%);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+        
+        .nav-logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--yellow);
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 30px;
+        }
+        
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        
+        .nav-links a:hover {
+            color: var(--yellow);
+        }
+        
+        /* Sections */
+        section {
+            padding: 100px 40px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .section-title {
+            font-size: 36px;
+            margin-bottom: 40px;
+            text-align: center;
+            color: var(--yellow);
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+        
+        /* Hero Section */
+        #hero {
+            position: relative;
+            padding-top: 120px;
+            text-align: center;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        #threejs-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+        
+        .hero-content {
+            max-width: 800px;
+            z-index: 2;
+        }
+        
+        .hero-title {
+            font-size: 60px;
+            margin-bottom: 20px;
+            background: linear-gradient(45deg, var(--yellow), #fff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .hero-subtitle {
+            font-size: 22px;
+            margin-bottom: 40px;
+            opacity: 0.9;
+        }
+        
+        .cta-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+        }
+        
+        .cta-button {
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-weight: bold;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        
+        .cta-primary {
+            background: var(--yellow);
+            color: var(--black);
+        }
+        
+        .cta-secondary {
+            background: transparent;
+            color: white;
+            border: 2px solid var(--yellow);
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        /* Courses Section */
+        .courses-container {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            flex-wrap: wrap;
+        }
+        
+        .course-card {
+            width: 300px;
+            padding: 30px;
+            text-align: center;
+            transition: transform 0.3s;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .course-card::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            right: -10px;
+            bottom: -10px;
+            background: linear-gradient(45deg, var(--yellow), transparent, var(--dark-green));
+            z-index: -1;
+            border-radius: 20px;
+            opacity: 0.3;
+        }
+        
+        .course-card:hover {
+            transform: translateY(-15px) rotate(2deg);
+        }
+        
+        .course-icon {
+            font-size: 40px;
+            margin-bottom: 20px;
+            color: var(--yellow);
+        }
+        
+        .course-title {
+            font-size: 24px;
+            margin-bottom: 15px;
+        }
+        
+        /* Enrollment Section */
+        .timeline {
+            display: flex;
+            justify-content: center;
+            position: relative;
+            margin: 60px 0;
+        }
+        
+        .timeline::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80%;
+            height: 4px;
+            background: linear-gradient(90deg, transparent, var(--yellow), transparent);
+        }
+        
+        .timeline-step {
+            width: 200px;
+            text-align: center;
+            padding: 20px;
+            margin: 0 15px;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .step-icon {
+            width: 70px;
+            height: 70px;
+            margin: 0 auto 15px;
+            border-radius: 50%;
+            background: var(--dark-green);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            transition: transform 0.3s;
+        }
+        
+        .timeline-step:hover .step-icon {
+            transform: scale(1.1) rotate(10deg);
+        }
+        
+        /* About Section */
+        .about-content {
+            max-width: 900px;
+            margin: 0 auto;
+            text-align: center;
+            font-size: 18px;
+            line-height: 1.8;
+            padding: 40px;
+        }
+        
+        /* Why Choose Us */
+        .features {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            flex-wrap: wrap;
+        }
+        
+        .feature {
+            width: 250px;
+            text-align: center;
+            padding: 25px;
+            transition: transform 0.3s;
+        }
+        
+        .feature:hover {
+            transform: translateY(-10px);
+        }
+        
+        .feature-icon {
+            font-size: 36px;
+            margin-bottom: 15px;
+            color: var(--yellow);
+        }
+        
+        /* Footer */
+        footer {
+            padding: 40px;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(10px);
+        }
+        
+        .map-container {
+            height: 300px;
+            width: 80%;
+            margin: 30px auto;
+            border-radius: 16px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .map-pin {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -100%);
+            color: var(--yellow);
+            font-size: 36px;
+            animation: float 3s ease-in-out infinite;
+        }
+        
+                /* ...existing code... */
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid var(--glass-border);
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            color: white;
+            font-size: 16px;
+            appearance: none;
+            -webkit-appearance: none;
+            outline: none;
+            transition: border 0.3s;
+        }
+
+        .form-group select:focus {
+            border: 1.5px solid var(--yellow);
+        }
+
+        .form-group option {
+            background: var(--black);
+            color: white;
+        }
+        /* ...existing code... */   
+        @keyframes float {
+            0% { transform: translate(-50%, -100%); }
+            50% { transform: translate(-50%, -115%); }
+            100% { transform: translate(-50%, -100%); }
+        }
+        
+        /* Popup Form */
+        .popup {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .popup-content {
+            width: 400px;
+            padding: 30px;
+            position: relative;
+        }
+        
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--yellow);
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid var(--glass-border);
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            color: white;
+        }
+        
+        .submit-btn {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: none;
+            background: var(--yellow);
+            color: var(--black);
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .submit-btn:hover {
+            background: #ffcc00;
+            transform: translateY(-3px);
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 40px;
+            }
+            
+            .timeline {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .timeline::before {
+                width: 4px;
+                height: 80%;
+            }
+            
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Preloader -->
+    <div id="preloader">
+        <div class="logo">
+        <img src="logo.png" alt="Randhir Foundation Logo" style="width:150px; height:150px; border-radius:50%;">
+    </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-logo">RANDHIR FOUNDATION</div>
+        <div class="nav-links">
+            <a href="#hero">Home</a>
+            <a href="#courses">Courses</a>
+            <a href="#enroll">Enroll</a>
+            <a href="#about">About</a>
+            <a href="#why-us">Why Us</a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="hero">
+        <div id="threejs-container"></div>
+        <div class="hero-content">
+            <h1 class="hero-title">Empowering Future Generations</h1>
+            <p class="hero-subtitle">Quality education at affordable prices with a vision for tomorrow</p>
+            <div class="cta-buttons">
+                <a href="#courses" class="cta-button cta-primary">Explore Courses</a>
+                <a href="#enroll" class="cta-button cta-secondary">Enroll Now</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Courses Section -->
+    <section id="courses">
+        <h2 class="section-title">Our Courses</h2>
+        <div class="courses-container">
+            <div class="course-card glass-effect" onclick="openPopup('science')">
+                <div class="course-icon"><i class="fas fa-atom"></i></div>
+                <h3 class="course-title">Digital Mastery 1st Batch</h3>
+                <p>💥 Crack Any Digital Job in Manipur 💥</p>
+                <hr style="border: none; height: 3px; background-color: rgb(238, 255, 0);">
+                <p>Class Starting from: 25th Sept.</p>
+                <p>Course Fee: ₹1299</p>
+            </div>
+            <div class="course-card glass-effect" onclick="openPopup('math')">
+                <div class="course-icon"><i class="fas fa-calculator"></i></div>
+                <h3 class="course-title">Tally 4th Batch</h3>
+                <p>💥Learn Accounting and Bookkeeping with Tally💥</p>
+                <hr style="border: none; height: 3px; background-color: rgb(238, 255, 0);">
+                <p>Class Starting soon.</p>
+                <p>Course Fee: ₹699</p>
+            </div>
+            <div class="course-card glass-effect" onclick="openPopup('language')">
+                <div class="course-icon"><i class="fas fa-language"></i></div>
+                <h3 class="course-title">Basic Web Development 2nd Batch</h3>
+                <p>💥From basics to advanced concepts, master web development with our expert faculty💥</p>
+                <hr style="border: none; height: 3px; background-color: rgb(238, 255, 0);">
+                <p>Class Starting soon.</p>
+                <p>Course Fee: ₹599</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Enrollment Section -->
+    <section id="enroll">
+        <h2 class="section-title">How to Enroll</h2>
+        <div class="timeline">
+            <div class="timeline-step glass-effect">
+                <div class="step-icon">1</div>
+                <h3>Select Course</h3>
+                <p>Choose from our variety of courses</p>
+            </div>
+            <div class="timeline-step glass-effect">
+                <div class="step-icon">2</div>
+                <h3>Submit Form</h3>
+                <p>Fill out the enrollment form</p>
+            </div>
+            <div class="timeline-step glass-effect">
+                <div class="step-icon">3</div>
+                <h3>Get Confirmation</h3>
+                <p>Receive confirmation on WhatsApp</p>
+            </div>
+            <div class="timeline-step glass-effect">
+                <div class="step-icon">4</div>
+                <h3>Start Learning</h3>
+                <p>Begin your educational journey</p>
+            </div>
+        </div>
+
+        <!-- ...existing code... -->
+<div class="popup-content glass-effect">
+    <span class="close-btn" onclick="closePopup()">&times;</span>
+    <h2>Enroll in <span id="course-name">Course</span></h2>
+    <form id="enrollment-form">
+        <div class="form-group">
+            <label for="course-select">Select Course</label>
+            <select id="course-select" required>
+                <option value="" disabled selected>Select a course</option>
+                <option value="Digital Mastery 1st Batch">Digital Mastery 1st Batch</option>
+                <option value="Tally 4th Batch">Tally 4th Batch</option>
+                <option value="Basic Web Development 2nd Batch">Basic Web Development 2nd Batch</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="name">Full Name</label>
+            <input type="text" id="name" required>
+        </div>
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" required>
+        </div>
+        <div class="form-group">
+            <label for="phone">Phone</label>
+            <input type="tel" id="phone" required>
+        </div>
+        <button type="submit" class="submit-btn">Submit Enrollment</button>
+    </form>
+</div>
+<!-- ...existing code... -->
+    </section>
+
+    <!-- About Section -->
+    <section id="about">
+        <h2 class="section-title">About Us</h2>
+        <div class="about-content glass-effect">
+            <p>Randhir Foundation was established with a vision to provide quality education to all segments of society. What started as a Online Teaching platform has now grown into a full-fledged educational foundation with plans to expand into school and college education.</p>
+            <br>
+            <p>Our mission is to make high-quality education accessible and affordable while maintaining the highest standards of teaching. We believe in nurturing not just academic excellence but also character and values.</p>
+            <br>
+            <p>Our future roadmap includes establishing a Coaching Center by 2028, a school by 2032, and a degree college by 20, creating a complete educational ecosystem.</p>
+        </div>
+    </section>
+
+    <!-- Why Choose Us -->
+    <section id="why-us">
+        <h2 class="section-title">Why Choose Us</h2>
+        <div class="features">
+            <div class="feature glass-effect">
+                <div class="feature-icon"><i class="fas fa-tag"></i></div>
+                <h3>Affordable</h3>
+                <p>Quality education at prices that won't break the bank</p>
+            </div>
+            <div class="feature glass-effect">
+                <div class="feature-icon"><i class="fas fa-graduation-cap"></i></div>
+                <h3>Quality</h3>
+                <p>Expert faculty and proven teaching methodologies</p>
+            </div>
+            <div class="feature glass-effect">
+                <div class="feature-icon"><i class="fas fa-rocket"></i></div>
+                <h3>Future-ready</h3>
+                <p>Curriculum designed to prepare students for future challenges</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <h2 class="section-title">Our Location</h2>
+        <div class="map-container glass-effect">
+            <!-- Google Map would be embedded here -->
+            <div style="width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; background: #2c2c2c;">
+                <div class="map-container glass-effect">
+    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d787.0845298379587!2d93.91066857233459!3d24.78484303004749!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x374927de371e9fc1%3A0xd696578636c67895!2sRandhir%20Foundation!5e1!3m2!1sen!2sin!4v1757086060386!5m2!1sen!2sin"
+        width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+</div>
+                <i class="fas fa-map-marker-alt map-pin"></i>
+            </div>
+        </div>
+        <p>© 2024 Randhir Foundation. All rights reserved.</p>
+    </footer>
+
+    <!-- Popup Form -->
+    <div class="popup" id="popup">
+        <div class="popup-content glass-effect">
+            <span class="close-btn" onclick="closePopup()">&times;</span>
+            <h2>Enroll in <span id="course-name">Course</span></h2>
+            <form id="enrollment-form">
+                <div class="form-group">
+                    <label for="name">Full Name</label>
+                    <input type="text" id="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="phone">Phone</label>
+                    <input type="tel" id="phone" required>
+                </div>
+                <button type="submit" class="submit-btn">Submit Enrollment</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Preloader Animation
+        document.addEventListener('DOMContentLoaded', function() {
+            const preloader = document.getElementById('preloader');
+            const logo = document.querySelector('.logo');
+            
+            // Logo animation sequence
+            setTimeout(() => {
+                logo.style.transition = 'transform 1s ease-in-out';
+                logo.style.transform = 'rotate(360deg)';
+                
+                setTimeout(() => {
+                    logo.style.transition = 'transform 0.8s ease-in-out';
+                    logo.style.transform = 'rotate(-15deg) scale(1.1)';
+                    
+                    setTimeout(() => {
+                        logo.style.transition = 'opacity 0.5s ease-in-out';
+                        logo.style.opacity = '0';
+                        
+                        setTimeout(() => {
+                            preloader.style.display = 'none';
+                        }, 500);
+                    }, 800);
+                }, 1000);
+            }, 500);
+            
+            // Simple Three.js background for hero section
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer({ alpha: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            document.getElementById('threejs-container').appendChild(renderer.domElement);
+            
+            // Add floating shapes
+            const geometries = [
+                new THREE.SphereGeometry(0.8, 32, 32),
+                new THREE.ConeGeometry(0.8, 1.5, 32),
+                new THREE.CylinderGeometry(0.6, 0.6, 1.2, 32),
+                new THREE.BoxGeometry(1, 1, 1)
+            ];
+            
+            const materials = [
+                new THREE.MeshPhongMaterial({ 
+                    color: 0xFFD700, 
+                    shininess: 100,
+                    transparent: true,
+                    opacity: 0.7
+                }),
+                new THREE.MeshPhongMaterial({ 
+                    color: 0x006400, 
+                    shininess: 100,
+                    transparent: true,
+                    opacity: 0.7
+                })
+            ];
+            
+            const shapes = [];
+            for (let i = 0; i < 15; i++) {
+                const geometry = geometries[Math.floor(Math.random() * geometries.length)];
+                const material = materials[Math.floor(Math.random() * materials.length)];
+                const shape = new THREE.Mesh(geometry, material);
+                
+                shape.position.x = (Math.random() - 0.5) * 20;
+                shape.position.y = (Math.random() - 0.5) * 20;
+                shape.position.z = (Math.random() - 0.5) * 10;
+                shape.rotation.set(
+                    Math.random() * Math.PI,
+                    Math.random() * Math.PI,
+                    Math.random() * Math.PI
+                );
+                
+                const scale = Math.random() * 0.8 + 0.4;
+                shape.scale.set(scale, scale, scale);
+                
+                scene.add(shape);
+                shapes.push(shape);
+            }
+            
+            // Add ambient light
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+            scene.add(ambientLight);
+            
+            // Add directional light
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+            directionalLight.position.set(1, 1, 1);
+            scene.add(directionalLight);
+            
+            camera.position.z = 5;
+            
+            // Mouse move effect
+            document.addEventListener('mousemove', (e) => {
+                const mouseX = (e.clientX / window.innerWidth) * 2 - 1;
+                const mouseY = -(e.clientY / window.innerHeight) * 2 + 1;
+                
+                shapes.forEach(shape => {
+                    shape.rotation.x += 0.001;
+                    shape.rotation.y += 0.001;
+                    shape.position.x += mouseX * 0.01;
+                    shape.position.y += mouseY * 0.01;
+                });
+            });
+            
+            // Animation
+            function animate() {
+                requestAnimationFrame(animate);
+                
+                shapes.forEach(shape => {
+                    shape.rotation.x += 0.005;
+                    shape.rotation.y += 0.005;
+                    shape.position.y += 0.003;
+                    if (shape.position.y > 10) shape.position.y = -10;
+                });
+                
+                renderer.render(scene, camera);
+            }
+            
+            animate();
+            
+            // Handle window resize
+            window.addEventListener('resize', () => {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            });
+            
+            // Form submission
+                    // ...existing code...
+            document.getElementById('enrollment-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const courseName = document.getElementById('course-select').value;
+                const name = document.getElementById('name').value;
+                const phone = document.getElementById('phone').value;
+
+                // Send to WhatsApp
+                const message = `Hello, I would like to enroll in ${courseName}. My name is ${name} and my phone number is ${phone}.`;
+                const whatsappUrl = `https://wa.me/916009164298?text=${encodeURIComponent(message)}`;
+                window.open(whatsappUrl, '_blank');
+
+                closePopup();
+            });
+            // ...existing code...
+        });
+        
+        // Popup functions
+        function openPopup(courseType) {
+            const courseNames = {
+                'science': 'Science Program',
+                'math': 'Mathematics',
+                'language': 'Language Arts'
+            };
+            
+            document.getElementById('course-name').textContent = courseNames[courseType];
+            document.getElementById('popup').style.display = 'flex';
+        }
+        
+        function closePopup() {
+            document.getElementById('popup').style.display = 'none';
+            document.getElementById('enrollment-form').reset();
+        }
+    </script>
+</body>
+</html>
