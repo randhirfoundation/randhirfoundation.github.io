@@ -8,6 +8,8 @@
     <link rel="icon" type="image/png" href="logo.png">
 <!--favicon end-->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!--social icons-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <style>
         :root {
@@ -475,7 +477,35 @@
             .nav-links {
                 display: none;
             }
-        }
+             .popup-content {
+                width: 90vw;
+                min-width: 0;
+                padding: 15px;
+                margin-left: 0%;
+            }
+            }
+            .social-icons {
+                position: fixed;
+                bottom: 20px; /* Distance from bottom */
+                right: 20px;  /* Distance from right */
+                display: flex;
+                gap: 15px;
+                z-index: 1000;
+            }
+
+            .social-icons a {
+                text-decoration: none;
+                color: rgb(255, 255, 255);
+                background: #ff0000;
+                padding: 12px;
+                border-radius: 50%;
+                font-size: 20px;
+                transition: 0.3s;
+            }
+            
+            .social-icons a:hover {
+                background: #d0ff00;
+            }
     </style>
 </head>
 <body>
@@ -633,6 +663,13 @@
             </div>
         </div>
     </section>
+
+        <!-- Floating Social Media Icons -->
+    <div class="social-icons">
+        <a href="https://www.facebook.com/profile.php?id=61570591200417" target="_blank"><i class="fab fa-facebook-f"></i></a>
+        <a href="https://www.youtube.com/@RandhirFoundation" target="_blank"><i class="fab fa-youtube"></i></a>
+        <a href="https://www.instagram.com/randhirfoundation/" target="_blank"><i class="fab fa-instagram"></i></a>
+  </div>
 
     <!-- Footer -->
     <footer>
