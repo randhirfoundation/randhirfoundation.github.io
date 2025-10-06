@@ -537,9 +537,20 @@
                 align-items: center;
             }
             
-            .nav-links {
-                display: none;
-            }
+      nav {
+        justify-content: flex-start; /* ensure items align to left on mobile */
+        padding: 12px 16px;
+    }
+
+    .nav-logo {
+        margin: 0;        /* remove any auto centering */
+        text-align: left; /* keep text left-aligned */
+        font-size: 20px;  /* slightly smaller on mobile */
+    }
+
+    .nav-links {
+        display: none; /* already hidden, kept for safety */
+    }
              .popup-content {
                 width: 90vw;
                 min-width: 0;
@@ -744,6 +755,7 @@
 
         <!-- Floating Social Media Icons -->
     <div class="social-icons">
+        <a href="https://chat.whatsapp.com/DGmGLrRRiBXAvWZlX4djKW?mode=ems_copy_t " target="_blank" title="Join our WhatsApp Group" aria-label="WhatsApp Group"><i class="fab fa-whatsapp"></i></a>
         <a href="https://www.facebook.com/profile.php?id=61570591200417" target="_blank"><i class="fab fa-facebook-f"></i></a>
         <a href="https://www.youtube.com/@RandhirFoundation" target="_blank"><i class="fab fa-youtube"></i></a>
         <a href="https://www.instagram.com/randhirfoundation/" target="_blank"><i class="fab fa-instagram"></i></a>
