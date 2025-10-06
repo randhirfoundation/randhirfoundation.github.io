@@ -148,11 +148,24 @@
         #hero {
             position: relative;
             padding-top: 120px;
+            padding-bottom: 0; /* make sure no extra space below hero */
             text-align: center;
             justify-content: center;
             align-items: center;
+            min-height: 70vh; /* ensures visible area on small screens */
+            background-image: url('background.png'); /* <-- put your image file at this path or use a URL */
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            overflow: hidden;
         }
-        
+        #hero::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(0,0,0,0.45), rgba(0,0,0,0.25));
+            z-index: 0;
+        }
         #threejs-container {
             position: absolute;
             top: 0;
@@ -160,13 +173,14 @@
             width: 100%;
             height: 100%;
             z-index: -1;
+            pointer-events: none;
         }
         
         .hero-content {
             max-width: 800px;
             z-index: 2;
+            position: relative;
         }
-        
         .hero-title {
             font-size: 60px;
             margin-bottom: 20px;
@@ -181,7 +195,35 @@
             margin-bottom: 40px;
             opacity: 0.9;
         }
-        
+/* notice / ticker bar (one-line, right-to-left) */       
+.notice-bar {
+    background: var(--yellow);
+    color: #ff0000;
+    width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    z-index: 3;
+    margin: 0; /* ensure it touches hero with no gap */
+}
+/* track that moves right -> left */
+.notice-track {
+    display: inline-block;
+    padding-left: 100%;
+    will-change: transform;
+    animation: marquee 12s linear infinite;
+    font-weight: 700;
+    font-size: 16px;
+    letter-spacing: 0.4px;
+}
+/* optional: duplicate track for smoother loop (browser will handle repeating) */
+@keyframes marquee {
+    0%   { transform: translateX(0%); }
+    100% { transform: translateX(-100%); }
+}
+
         .cta-buttons {
             display: flex;
             gap: 20px;
@@ -551,6 +593,13 @@
         </div>
     </section>
 
+</section>
+
+    <!-- Admission notice bar (immediately below hero, no gap) -->
+    <div class="notice-bar" role="status" aria-live="polite">
+        <div class="notice-track">📢 Admission Open for Digital Mastery Course – Enroll Now for Just ₹799! 🚀</div>
+    </div>
+
     <!-- Courses Section -->
     <section id="courses">
         <h2 class="section-title">Our Courses</h2>
@@ -561,7 +610,7 @@
                 <p>💥 Crack Any Digital Job in Manipur 💥</p>
                 <hr style="border: none; height: 3px; background-color: rgb(238, 255, 0);">
                 <p>Class Starting from: 9th October.</p>
-                <p>Course Fee: ₹1299</p>
+                <p>Course Fee: ₹799</p>
             </div>
             <div class="course-card glass-effect" onclick="openPopup('math')">
                 <div class="course-icon"><i class="fas fa-calculator"></i></div>
@@ -627,8 +676,8 @@
             <input type="text" id="name" required>
         </div>
         <div class="form-group">
-            <label for="email">Email</label>
-            <input type="email" id="email" required>
+            <label for="address">Address</label>
+            <input type="text" id="address" required>
         </div>
         <div class="form-group">
             <label for="phone">Phone</label>
@@ -696,30 +745,6 @@
         </div>
         <p>© 2024 Randhir Foundation. All rights reserved.</p>
     </footer>
-
-    <!-- Popup Form -->
-    <div class="popup" id="popup">
-        <div class="popup-content glass-effect">
-            <span class="close-btn" onclick="closePopup()">&times;</span>
-            <h2>Enroll in <span id="course-name">Course</span></h2>
-            <form id="enrollment-form">
-                <div class="form-group">
-                    <label for="name">Full Name</label>
-                    <input type="text" id="name" required>
-                </div>
-                <div class="form-group">
-                    <label for="email">Email</label>
-                    <input type="email" id="email" required>
-                </div>
-                <div class="form-group">
-                    <label for="phone">Phone</label>
-                    <input type="tel" id="phone" required>
-                </div>
-                <button type="submit" class="submit-btn">Submit Enrollment</button>
-            </form>
-        </div>
-    </div>
-
     <script>
         // Preloader Animation
         document.addEventListener('DOMContentLoaded', function() {
@@ -851,10 +876,11 @@
                 e.preventDefault();
                 const courseName = document.getElementById('course-select').value;
                 const name = document.getElementById('name').value;
+                const address = document.getElementById('address').value;
                 const phone = document.getElementById('phone').value;
 
                 // Send to WhatsApp
-                const message = `Hello, I would like to enroll in ${courseName}. My name is ${name} and my phone number is ${phone}.`;
+                const message = `Hello, I would like to enroll in ${courseName}. My name is ${name} from ${address} and my phone number is ${phone}.`;
                 const whatsappUrl = `https://wa.me/916009164298?text=${encodeURIComponent(message)}`;
                 window.open(whatsappUrl, '_blank');
 
